@@ -1,11 +1,11 @@
 def play_game():
   import random
 
-# Step 1: Create the Word Bank 🎯
+# Step 1: Creating a word bank 
   word_bank = ['rizz', 'ohio', 'sigma', 'tiktok', 'skibidi','aura','stranger things']
   word = random.choice(word_bank)
 
-# Step 2: Setup Game State 📋
+# Step 2: Setup Game State
   guessedWord = [' ' if char == ' ' else '_' for char in word]
   hangman_art = ['''                    +----------+
                     |          |
@@ -67,7 +67,7 @@ def play_game():
   max_attempts = len(hangman_art)-1
   attempts = max_attempts
 
-# Step 3: Game Loop 🔁
+# Step 3: Game Loop 
   print("🎮 Welcome to the Word Guess Game! 🎮")
   print("Guess the word, one letter at a time!")
 
@@ -97,7 +97,7 @@ def play_game():
         print('\n🎉 Congratulations!! You guessed the word: ' + word)
         break
 
-# Step 4: End Game 🏁
+# Step 4: End Game 
   if attempts == 0 and '_' in guessedWord:
     print('\n😢 You\'ve run out of attempts! The word was: ' + word)
 
