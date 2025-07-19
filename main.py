@@ -1,109 +1,158 @@
+import random
+
+
+HANGMAN_PICS = [
+    """
+     ------
+     |    |
+     |    O
+     |   /|\\
+     |   / \\
+     |
+    =========
+    """,
+    """
+     ------
+     |    |
+     |    O
+     |   /|\\
+     |   / 
+     |
+    =========
+    """,
+    """
+     ------
+     |    |
+     |    O
+     |   /|\\
+     |    
+     |
+    =========
+    """,
+    """
+     ------
+     |    |
+     |    O
+     |   /|
+     |    
+     |
+    =========
+    """,
+    """
+     ------
+     |    |
+     |    O
+     |    |
+     |    
+     |
+    =========
+    """,
+    """
+     ------
+     |    |
+     |    O
+     |    
+     |    
+     |
+    =========
+    """,
+    """
+     ------
+     |    |
+     |    
+     |    
+     |    
+     |
+    =========
+    """
+]
+
+# Word lists by difficulty
+WORDS = {
+    "easy": ["cat", "dog", "bat", "pen", "sun"],
+    "medium": ["apple", "house", "train", "chair", "zebra"],
+    "hard": ["python", "planet", "wizard", "jungle", "oxygen"]
+}
+
+# Scoreboard
+wins = 0
+losses = 0
+
+def get_word(difficulty):
+    return random.choice(WORDS[difficulty]).upper()
+
+def display_hangman(lives):
+    print(HANGMAN_PICS[6 - lives])
+
 def play_game():
-  import random
+    global wins, losses
 
-# Step 1: Create the Word Bank 🎯
-  word_bank = ['rizz', 'ohio', 'sigma', 'tiktok', 'skibidi','aura','stranger things']
-  word = random.choice(word_bank)
+    print("Choose difficulty: easy / medium / hard")
+    while True:
+        difficulty = input(">> ").strip().lower()
+        if difficulty in WORDS:
+            break
+        else:
+            print(" Invalid difficulty. Try again.")
 
-# Step 2: Setup Game State 📋
-  guessedWord = [' ' if char == ' ' else '_' for char in word]
-  hangman_art = ['''                    +----------+
-                    |          |
-                               |
-                               |
-                               |
-                               |
-                               | ''',
-                '''                     +----------+
-                    |          |
-                    o          | 
-                               |
-                               |
-                               |
-                               | ''',
-                '''                      +----------+
-                    |          |
-                    o          | 
-                    |          |
-                               |
-                               |
-                               |   ''',
-                '''                      +----------+
-                    |          |
-                    o          | 
-                   /|          |
-                               |
-                               |
-                               | ''',
-                '''                       +----------+
-                    |          |
-                    o          | 
-                   /|\         |
-                               |
-                               |
-                               |  ''',
-                '''                        +----------+
-                    |          |
-                    o          | 
-                   /|\         |
-                    |          |
-                               |
-                               |  ''',
-                '''                         +----------+
-                    |          |
-                    o          | 
-                   /|\         |
-                   /|          |
-                               |
-                               |  ''',
-                '''                          +----------+
-                    |          |
-                    o          | 
-                   /|\         |
-                   /|\         |
-                               |
-                               |  '''            ]
+    word = get_word(difficulty)
+    guessed = ["_"] * len(word)
+    guessed_letters = set()
+    lives = 6
+    print("\n Let's start! Guess the word letter by letter.")
 
-  max_attempts = len(hangman_art)-1
-  attempts = max_attempts
+    while lives > 0:
+        display_hangman(lives)
+        print("\nWord: ", " ".join(guessed))
+        print("Guessed letters:", " ".join(sorted(guessed_letters)))
+        guess = input("Your guess: ").upper()
 
-# Step 3: Game Loop 🔁
-  print("🎮 Welcome to the Word Guess Game! 🎮")
-  print("Guess the word, one letter at a time!")
+        if not guess.isalpha() or len(guess) != 1:
+            print("⚠️ Enter a single alphabet only.")
+            continue
 
-  while attempts > 0:
-    print('\nCurrent word: ' + ' '.join(guessedWord))
-    print(hangman_art[max_attempts-attempts])
-    guess = input('Guess a letter: ').lower()
+        if guess in guessed_letters:
+            print("⚠️ You already guessed that.")
+            continue
 
-    if not guess.isalpha() or len(guess) != 1:
-        print("⚠️ Please enter only a single letter.")
-        continue
+        guessed_letters.add(guess)
 
-    if guess in guessedWord:
-        print("⚠️ You already guessed that letter!")
-        continue
+        if guess in word:
+            print(" Good guess!")
+            for i, ch in enumerate(word):
+                if ch == guess:
+                    guessed[i] = guess
+            if "_" not in guessed:
+                print("🎉 YOU WIN! The word was:", word)
+                wins += 1
+                break
+        else:
+            print("❌ Wrong guess!")
+            lives -= 1
 
-    if guess in word:
-        for i in range(len(word)):
-            if word[i] == guess:
-                guessedWord[i] = guess
-        print('✅ Great guess!')
-    else:
-        attempts -= 1
-        print('❌ Wrong guess! Attempts left: ' + str(attempts))
+    if lives == 0:
+        display_hangman(lives)
+        print("💀 You lost! The word was:", word)
+        losses += 1
 
-    if '_' not in guessedWord:
-        print('\n🎉 Congratulations!! You guessed the word: ' + word)
-        break
+def show_scoreboard():
+    print("\n🏆 SCOREBOARD")
+    print("Wins:   ", wins)
+    print("Losses: ", losses)
 
-# Step 4: End Game 🏁
-  if attempts == 0 and '_' in guessedWord:
-    print('\n😢 You\'ve run out of attempts! The word was: ' + word)
+def main():
+    print("="*45)
+    print("🎯 WELCOME TO THE WORD GUESS HANGMAN GAME 🎯")
+    print("="*45)
 
-while True:
-    play_game()
-    again = input("\n🔁 Do you want to play again? (yes/no): ").lower()
-    if again != 'yes':
-        print("\n👋 Thanks for playing! See you again!")
-        break
+    while True:
+        play_game()
+        show_scoreboard()
+
+        again = input("\n🔁 Do you want to play again? (yes/no): ").strip().lower()
+        if again != "yes":
+            print("👋 Thanks for playing!")
+            break
+
+if __name__ == "__main__":
+    main()
